@@ -1,0 +1,51 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Python 3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:3-3.14-trixie",
+	
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
+		"ghcr.io/devcontainers-extra/features/uv:1": {"version": "0.10.12"},
+		"ghcr.io/devcontainers-extra/features/ruff:2": {"version": "0.15.7"}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Configure tool-specific properties.
+	"customizations": {
+    	"vscode": {
+        	"settings": {
+               "workbench.colorTheme": "Tokyo Night"
+            },
+            "extensions": [
+            	"ms-toolsai.jupyter",
+                "enkia.tokyo-night",
+				"charliermarsh.ruff",
+				"astral-sh.ty"
+            ]
+        }
+    },
+
+	"mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    ],
+
+	"workspaceFolder": "/workspace",
+
+	// Create virtual environment and install dependencies
+    "postCreateCommand": "uv venv && uv pip install -e .[dev]",
+    
+    // Set up environment for the virtual environment
+    "remoteEnv": {
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+        "VIRTUAL_ENV": "${containerWorkspaceFolder}/.venv",
+        "UV_SYSTEM_PYTHON": "0",
+		"UV_VENV_CLEAR": "1"
+    }
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

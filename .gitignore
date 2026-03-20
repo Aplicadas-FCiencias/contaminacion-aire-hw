@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Data (raw and intermediate – keep these out of version control)
+00-data/raw/
+00-data/interim/
+00-data/processed/
+
+# Reports (figures may be large, but you may want to keep reports; adjust as needed)
+02-reports/figures/
+02-reports/data_quality/
+
+# IDE
+.vscode/
+.idea/

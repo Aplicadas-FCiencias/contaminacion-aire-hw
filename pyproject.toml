@@ -1,0 +1,59 @@
+[project]
+name = "your_project"
+version = "0.1.0"
+description = "A data science project template"
+authors = [{name = "Your Name", email = "you@example.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=3.0,<4.0",
+    "openpyxl>=3.1,<4",
+    "xlrd>=2.0,<3",
+    "matplotlib>=3.10,<4",
+    "ipykernel>=7.2,<8",
+    "numpy>=2.4,<3.0",
+    "scikit-learn>=1.8,<2",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yourname/your_project"
+"Bug Reports" = "https://github.com/yourname/your_project/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests", "scripts", "notebooks"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+dev = [
+    "ty>=0.0.24",
+    "pytest>=9,<10",    
+]
+
+# Ruff configuration
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "C4", "UP", "ANN", "ARG", "BLE", "PTH", "RUF"]
+ignore = ["ANN101"]  
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# Mypy configuration
+# [tool.mypy]
+# python_version = "3.12"
+# warn_return_any = true
+# warn_unused_configs = true
+# ignore_missing_imports = true
+# strict = true
