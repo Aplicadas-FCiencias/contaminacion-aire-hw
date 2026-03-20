@@ -1,5 +1,5 @@
 [project]
-name = "your_project"
+name = "contaminacion"
 version = "0.1.0"
 description = "A data science project template"
 authors = [{name = "Your Name", email = "you@example.com"}]
