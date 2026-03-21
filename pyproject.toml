@@ -49,11 +49,3 @@ ignore = ["ANN101"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-
-# Mypy configuration
-# [tool.mypy]
-# python_version = "3.12"
-# warn_return_any = true
-# warn_unused_configs = true
-# ignore_missing_imports = true
-# strict = true
