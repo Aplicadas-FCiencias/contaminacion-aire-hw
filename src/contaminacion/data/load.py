@@ -1,14 +1,21 @@
 import pandas as pd
 
-COLS: list[str] = ["date", "id_station", "id_parameter", "valor"]
+_DEFAULT_COLS: tuple[str, ...] = ("date", "id_station", "id_parameter", "valor")
 
-DTYPES_COLS: list[str] = ["category", "category", "float"]
-
+_DTYPES_COLS: dict[str, str] = {
+    "id_station": "category",
+    "id_parameter": "category",
+    "valor": "float",
+}
 
 def load_compressed_pollution_data(
-    file_path: str, skiprows: int = 9, to_wide: bool = True
+    file_path: str,
+    skiprows: int = 9,
+    to_wide: bool = True,
+    columns: tuple[str, ...] = _DEFAULT_COLS,
+    col_dtypes: dict[str, str] = _DTYPES_COLS,
 ) -> pd.DataFrame:
-    """ Carga el archivo de datos de conatminantes atmosfericos
+    """Carga el archivo de datos de conatminantes atmosfericos
 
     Se carga a un DataFrame de pandas los datos del archivo descargado de
     contaminantes en formato comprimido (zip)
@@ -17,6 +24,8 @@ def load_compressed_pollution_data(
         file_path (str): ruta al archivo de datos comprimido
         skiprows(int): número de lineas a escapar del inicio del archivo
         to_wide (bool): regresa las concentranciones en formato ancho
+        columns (tuple[str]): tupla con el nombre de las columnas a cargar
+        col_dtypes (dict[str, str]): diccionario de tipos de las columnas
 
     Returns:
         (pd.DataFrame) Regresa el archivo de contaminantes atmosféricos en
@@ -27,10 +36,12 @@ def load_compressed_pollution_data(
         skiprows=skiprows,
         encoding="utf-8",
         compression="zip",
-        # usecols=COLS,
-        dtype=dict(zip(COLS[1:], DTYPES_COLS, strict=True)),
-        parse_dates=True,
+        usecols=columns,
+        dtype=col_dtypes
     )
+
+    if "date" in columns:
+        df["date"] = pd.to_datetime(df["date"])
 
     df = df.dropna(subset=["valor"])
     if not to_wide:

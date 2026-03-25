@@ -23,8 +23,8 @@ build/
 00-data/processed/
 
 # Reports (figures may be large, but you may want to keep reports; adjust as needed)
-02-reports/figures/
-02-reports/data_quality/
+03-reports/figures/
+03-reports/data_quality/
 
 # IDE
 .vscode/
