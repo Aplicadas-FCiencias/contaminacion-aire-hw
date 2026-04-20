@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from contaminacion.data import transform
 from contaminacion.utils import aggregations, logger
 
 log = logger.get_logger(__name__)
@@ -32,8 +33,17 @@ def process_station(file: Path, output_path: Path) -> None:
             SO2  = ("SO2",   lambda s: aggregations.agg_compliance(s, np.max)),
             PM10 = ("PM10",  lambda s: aggregations.agg_compliance(s, np.mean)),
             PM25 = ("PM2.5", lambda s: aggregations.agg_compliance(s, np.mean)),
-            CO   = ("CO",    aggregations.daily_co_indicator),
+            CO   = ("CO", aggregations.daily_co_indicator)
         )
+    )
+
+    daily_data = daily_data.assign(
+        aire_salud_PM10 = transform.asigna_indice_aire_salud(daily_data["PM10"], breaks=[45, 60, 132, 213]),
+        aire_salud_PM25 = transform.asigna_indice_aire_salud(daily_data["PM25"], breaks=[15, 33, 79, 130]),
+        aire_salud_CO = transform.asigna_indice_aire_salud(daily_data["CO"], breaks=[5, 9, 12, 16]),
+        aire_salud_NO2 = transform.asigna_indice_aire_salud(daily_data["NO2"], breaks=[0.053, 0.106, 0.160, 0.213]),
+        aire_salud_O3 = transform.asigna_indice_aire_salud(daily_data["O3"], breaks=[0.058, 0.090, 0.135, 0.175]),
+        aire_salud_SO2 = transform.asigna_indice_aire_salud(daily_data["SO2"], breaks=[0.035, 0.075, 0.185, 0.304])
     )
 
     output_file = output_path / f"daily_2025_{station_id}.parquet"

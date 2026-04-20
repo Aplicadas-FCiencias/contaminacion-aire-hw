@@ -9,7 +9,7 @@ def agg_compliance(
     agg_func: Callable[[pd.Series], float],
     min_valid: float = 0.75,
     expected_hours: int = 24,
-) -> float | None:
+) -> float:
     """Aplica una función de agregación si la fracción de valores válidos supera un umbral.
 
     Evalúa si la proporción de valores no nulos en una serie temporal respecto
@@ -38,9 +38,9 @@ def agg_compliance(
     valid_count = series.notna().sum()
     if valid_count / expected_hours >= min_valid:
         return agg_func(series)
-    return None
+    return np.nan
 
-def daily_co_indicator(series: pd.Series, min_valid: float = 0.75) -> float | None:
+def daily_co_indicator(series: pd.Series, min_valid: float = 0.75) -> float:
     """Calcula el indicador diario de CO según la norma oficial mexicana.
 
     El indicador diario de CO se define como el máximo de los promedios móviles
@@ -69,6 +69,6 @@ def daily_co_indicator(series: pd.Series, min_valid: float = 0.75) -> float | No
     valid_moving_averages = moving_averages.dropna()
 
     if valid_moving_averages.empty:
-        return None
+        return np.nan
 
     return valid_moving_averages.max()

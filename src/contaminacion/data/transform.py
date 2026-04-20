@@ -1,7 +1,10 @@
 from typing import Literal
 
+import numpy as np
 import pandas as pd
+from pandas.core.window.rolling import Rolling
 
+from contaminacion import INDICE_AIRE_SALUD_TYPE, AireSaludBreaks
 from contaminacion.utils import logger
 
 log = logger.get_logger(__name__)
@@ -70,3 +73,69 @@ def convert_columns_to_rounded_int(
     converted_data[columns] = converted_data[columns].round().astype(dtype)
 
     return converted_data
+
+def calcular_promedio_movil_ponderado(series: pd.Series, tipo_pm: Literal["PM2.5", "PM10"]) -> pd.Series:
+    """Calcula la concentración promedio movil ponderada de 12 horas.
+
+    Este indicador corresponde al índice NowCast propuesto por la EPA.
+
+    Args:
+        series (Series): Serie temporal con mediciones horarias de PM para un
+            día. Debe estar indexada por DatetimeIndex con frecuencia horaria.
+            Puede contener valores nulos (NaN).
+        tipo_pm ('PM10','PM2.5'): selector de tipo de particula para aplicar el
+            factor de ajuste.
+
+    Returns:
+        (pd.Series) Regresa los promedios moviles ponderados de 12 horas para
+        la concentración de PM. 
+    """
+    out_series = series
+
+    # TODO: escribir el cuerpo de la función
+    return out_series
+
+def mean_8h_co(series: pd.Series, min_valid: float = 0.75) -> pd.Series:
+    """Calcula el promedio concentración de 8 horas CO.
+
+    Un promedio móvil es válido únicamente si al menos el 75% de sus valores 
+    horarios dentro de la ventana son no nulos (es decir, mínimo 6 de 8 horas).
+
+    Args:
+        series (Series): Serie temporal con mediciones horarias de CO para un día.
+            Debe estar indexada por DatetimeIndex con frecuencia horaria.
+            Puede contener valores nulos (NaN).
+        min_valid (float): Fracción mínima de horas no nulas requeridas dentro
+            de cada ventana de 8 horas para que el promedio móvil sea considerado
+            válido. Por defecto es 0.75 (6 de 8 horas).
+
+    Returns:
+        (pd.Series) Los promedios móviles de 8 horas válidos de la ventana. 
+    """
+    out_series = series
+
+    # TODO: escribir el cuerpo de la función
+    return out_series
+
+def asigna_indice_aire_salud(series: pd.Series, breaks: AireSaludBreaks, labels: pd.CategoricalDtype =INDICE_AIRE_SALUD_TYPE) -> pd.Series[INDICE_AIRE_SALUD_TYPE]:
+    """ Asigna el valor del índice de Aire Salud dependiendo de la nivel
+
+    Se asigna el valor Buena, Aceptable, Mala, Muy Mala y Extremadamente Mala de
+    acuerdo a en que nivel se encuentre la concentración del contaminante
+
+    Args:
+        series (Series): Serie temporal con mediciones horarias de un 
+            contaminante.
+        breaks (List): Lista de cuatro entradas para generar los cortes de los
+            intervalos para asignar el valor de calidad
+        labels (Categorical): Etiquetas para asignar en cada intervalo. Esta debe
+            ser una variable del tipo Categorical
+
+    Returns:
+        (Series) Regresa la serie con los valores del índice de Aire y Salud 
+        asignado a cada concentración.
+    """
+    out_series = series
+
+    # TODO: escribir el cuerpo de la función
+    return out_series
