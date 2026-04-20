@@ -60,8 +60,11 @@ jobs:
       - name: Autograding Reporter
         uses: classroom-resources/autograding-grading-reporter@v1
         env:
-          TEST-01-calcular-promedio-8h-co_RESULTS: "${{steps.test-calcular-promedio-8h-co.outputs.result}}"
-          TEST-02-calcular-promedio-movil-ponderado_RESULTS: "${{steps.test-calcular-promedio-movil-ponderado.outputs.result}}"
-          TEST-03-asigna-indice-aire-salud_RESULTS: "${{steps.test-asigna-indice-aire-salud.outputs.result}}"
+          TEST-CALCULAR-PROMEDIO-8H-CO_RESULTS: "${{steps.test-calcular-promedio-8h-co.outputs.result}}"
+          TEST-CALCULAR-PROMEDIO-MOVIL-PONDERADO_RESULTS: "${{steps.test-calcular-promedio-movil-ponderado.outputs.result}}"
+          TEST-ASIGNA-INDICE-AIRE-SALUD_RESULTS: "${{steps.test-asigna-indice-aire-salud.outputs.result}}"
         with:
-          runners: test-calcular-promedio-8h-co,test-calcular-promedio-movil-ponderado,test-asigna-indice-aire-salud
+          runners: |
+            test-calcular-promedio-8h-co,
+            test-calcular-promedio-movil-ponderado,
+            test-asigna-indice-aire-salud
