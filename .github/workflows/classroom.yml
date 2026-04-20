@@ -65,6 +65,6 @@ jobs:
           TEST-03-asigna-indice-aire-salud_RESULTS: "${{steps.test-asigna-indice-aire-salud.outputs.result}}"
         with:
           runners: |
-            test-01-calcular-promedio-8h-co,
-            test-02-calcular-promedio-movil-ponderado,
-            test-03-asigna-indice-aire-salud
+            test-calcular-promedio-8h-co,
+            test-calcular-promedio-movil-ponderado,
+            test-asigna-indice-aire-salud
