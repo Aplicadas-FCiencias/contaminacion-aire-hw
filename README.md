@@ -33,3 +33,16 @@ curl -O -k --ciphers 'DEFAULT:!DH' https://aire.cdmx.gob.mx/descargas/Opendata/a
   * `00-data/`: Almacenamiento de datos crudos (`raw`) y procesados.
   * `01-scripts/`: Scripts de procesamiento de datos.
   * `src/`: Paquete de utilidades para análisis de contaminación.
+  * `98-tests/`: Tests para las funciones del paquete `src/contaminacion/data/transform.py`.
+
+## 📝 Tarea
+
+El objetivo de este desarrollo es dejar una tarea práctica basada en procesar información anual de contaminantes atmosféricos para calcular el índice de Aire y Salud que define la **NOM-172-SEMARNAT-2023**.
+
+La tarea consiste en escribir el cuerpo de las siguientes funciones:
+
+- `transform.mean_8h_co` (30 puntos)
+- `transform.calcular_promedio_movil_ponderado` (30 puntos)
+- `transform.asigna_indice_aire_salud` (30 puntos)
+
+**Total:** 90 puntos.
