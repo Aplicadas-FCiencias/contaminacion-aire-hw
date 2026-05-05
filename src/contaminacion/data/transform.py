@@ -10,14 +10,14 @@ from contaminacion.utils import logger
 log = logger.get_logger(__name__)
 
 
-def from_ppb_to_ppm(data: pd.Series[float]) -> pd.Series[float]:
+def from_ppb_to_ppm(data: pd.Series) -> pd.Series:
     """Convierte una concentracion de ppb a ppm.
 
     Args:
-        data (pd.Series[float]): valores de concentracion en ppb
+        data (pd.Series): valores de concentracion en ppb
 
     Returns:
-        (pd.Series[float]) regresa los valores de concentracion en ppm
+        (pd.Series) regresa los valores de concentracion en ppm
     """
     return data / 1_000.0
 
@@ -68,7 +68,7 @@ def convert_columns_to_rounded_int(
     converted_data = data.copy()
     if not columns:
         log.warning("Se convertiran todas la columnas numericas a enteros")
-        columns = converted_data.select_dtypes(include=["float"]).columns  # ty:ignore[invalid-assignment]
+        columns = converted_data.select_dtypes(include=["float"]).columns  # type: ignore[invalid-assignment]
 
     converted_data[columns] = converted_data[columns].round().astype(dtype)
 
@@ -80,7 +80,8 @@ def calcular_promedio_movil_ponderado(
 ) -> pd.Series:
     """Calcula la concentración promedio movil ponderada de 12 horas.
 
-    Este indicador corresponde al índice NowCast propuesto por la EPA.
+    Este indicador corresponde al índice NowCast propuesto por la EPA y 
+    alineado a la NOM-172-SEMARNAT-2023.
 
     Args:
         series (Series): Serie temporal con mediciones horarias de PM para un
@@ -93,9 +94,38 @@ def calcular_promedio_movil_ponderado(
         (pd.Series) Regresa los promedios moviles ponderados de 12 horas para
         la concentración de PM.
     """
-    out_series = series
+    
+    # Factor de ajuste dictado por la NOM-172-SEMARNAT-2023
+    factor_ajuste = 0.714 if tipo_pm == "PM10" else 0.694
 
-    # TODO: escribir el cuerpo de la función
+    def _nowcast(arr: np.ndarray) -> float:
+        # La norma requiere al menos 2 horas válidas en las últimas 3 horas
+        if np.sum(~np.isnan(arr[-3:])) < 2:
+            return np.nan
+        
+        c_max = np.nanmax(arr)
+        c_min = np.nanmin(arr)
+        
+        # Calcular el peso w
+        if c_max == c_min or c_max == 0:
+            w = 1.0
+        else:
+            # W = Factor de ponderación redondeado a dos cifras decimales
+            w = np.round(c_min / c_max, 2)
+            
+        w = max(w, 0.5)
+        
+        # Generar los pesos dinámicamente según el tamaño actual de la ventana
+        weights = w ** np.arange(len(arr) - 1, -1, -1)
+        
+        mask = ~np.isnan(arr)
+            
+        # Calcular el nowcast crudo y aplicar el factor de ajuste normativo
+        nowcast_val = np.sum(arr[mask] * weights[mask]) / np.sum(weights[mask])
+        return nowcast_val * factor_ajuste
+
+    out_series = series.rolling(window=12, min_periods=2).apply(_nowcast, raw=True)
+    
     return out_series
 
 
@@ -116,9 +146,11 @@ def mean_8h_co(series: pd.Series, min_valid: float = 0.75) -> pd.Series:
     Returns:
         (pd.Series) Los promedios móviles de 8 horas válidos de la ventana.
     """
-    out_series = series
-
-    # TODO: escribir el cuerpo de la función
+    window_size = 8
+    min_periods = int(np.ceil(window_size * min_valid))
+    
+    out_series = series.rolling(window=window_size, min_periods=min_periods).mean()
+    
     return out_series
 
 
@@ -126,7 +158,7 @@ def asigna_indice_aire_salud(
     series: pd.Series,
     breaks: AireSaludBreaks,
     labels: pd.CategoricalDtype = INDICE_AIRE_SALUD_TYPE,
-) -> pd.Series[INDICE_AIRE_SALUD_TYPE]:
+) -> pd.Series:
     """Asigna el valor del índice de Aire Salud dependiendo de la nivel
 
     Se asigna el valor Buena, Aceptable, Mala, Muy Mala y Extremadamente Mala de
@@ -144,7 +176,15 @@ def asigna_indice_aire_salud(
         (Series) Regresa la serie con los valores del índice de Aire y Salud
         asignado a cada concentración.
     """
-    out_series = series
+    bins = [-np.inf] + list(breaks) + [np.inf]
+    categorias = labels.categories if hasattr(labels, "categories") else labels
+    
+    out_series = pd.cut(
+        series,
+        bins=bins,
+        labels=categorias,
+        right=True
+    )
+    
+    return out_series.astype(labels)
 
-    # TODO: escribir el cuerpo de la función
-    return out_series
